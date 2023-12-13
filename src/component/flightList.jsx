@@ -2,28 +2,30 @@ import React, { useEffect, useState } from "react";
 import Header from "./header";
 import { useFlightListContext } from "../Context/flightListContext";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Button } from "@mui/material";
-import moment from "moment";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import moment from "moment";
+
 const FlightList = () => {
+  const [detailsVisible, setDetailsVisible] = useState(true);
   const navigate = useNavigate();
   const { searchedFlightList, updateCartFlightList, formData } =
     useFlightListContext();
-  console.log(formData);
-  const [detailsVisible, setDetailsVisible] = useState(true);
 
   useEffect(() => {
     if (!searchedFlightList?.length) {
       navigate("/flight");
     }
   }, []);
+
   const toggleDetailsVisibility = () => {
     setDetailsVisible(!detailsVisible);
   };
+
   return (
     <>
       <Header />

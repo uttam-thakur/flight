@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Grid,
-  getLinearProgressUtilityClass,
 } from "@mui/material";
 import Header from "./header";
 import axios from "axios";
@@ -25,7 +24,6 @@ import { useFlightListContext } from "../Context/flightListContext";
 const FlightSearch = () => {
   const [flyingFromValue, setFlyingFromValue] = useState("");
   const [flyingToValue, setFlyingToValue] = useState("");
-  const [airportResults, setAirportResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [departureDateValue, setDepartureDateValue] = useState("");
   const [preferredClassValue, setPreferredClassValue] = useState(0);
@@ -36,16 +34,29 @@ const FlightSearch = () => {
   const [selectedTravelType, setSelectedTravelType] = useState("oneway"); // Default value is 'oneway'
   const [selectedArrivalAirpot, setSelectedArrivalAirport] = useState({});
   const [selectedDepartureAirpot, setSelectedDepartureAirport] = useState({});
-
   const [arriveLocationList, setArriveLocationList] = useState([]);
   const [depatureLocationList, setDepatureLocationList] = useState([]);
-
   const { updateSearchedFlightList, updateFormData } = useFlightListContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    debouncedFetchAirportResults(flyingFromValue, "arrival");
+    return () => {
+      debouncedFetchAirportResults.cancel();
+    };
+  }, [flyingFromValue]);
+
+  useEffect(() => {
+    debouncedFetchAirportResults(flyingToValue, "departure");
+    return () => {
+      debouncedFetchAirportResults.cancel();
+    };
+  }, [flyingToValue]);
 
   const travelHandler = () => {
     setPassengerListOpen(false);
   };
+
   const togglePassengerList = () => {
     setPassengerListOpen((prevOpen) => !prevOpen);
   };
@@ -60,12 +71,7 @@ const FlightSearch = () => {
   };
   const ency =
     "U2FsdGVkX19WhOx34bCCs/vjnFagLZzFyQqvyTXAs6fh5H1T97PTsFEEDpuPr1oh8zDGGmCVr/iEdTGTlqDlmNvYV6fa2InHgZ50ICooL7U=";
-  const decryptObject = (encryptedString) => {
-    const bytes = CryptoJS.AES.decrypt(encryptedString, "aLtAeNCrypT");
-    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
-    const decryptedObject = JSON.parse(decryptedString);
-    return decryptedObject;
-  };
+
   const fetchAirportResults = async (searchKey, destination) => {
     try {
       const accessToken = localStorage.getItem("token");
@@ -89,7 +95,6 @@ const FlightSearch = () => {
         { request_data: encryptObject({ search_key: searchKey }) },
         { headers }
       );
-      setAirportResults(response.data.results);
       if (destination == "arrival") {
         setArriveLocationList(() => response?.data?.main_data?.data);
       } else {
@@ -174,19 +179,6 @@ const FlightSearch = () => {
     setFlyingToValue(searchKey);
     setLoading(true);
   };
-  useEffect(() => {
-    debouncedFetchAirportResults(flyingFromValue, "arrival");
-    return () => {
-      debouncedFetchAirportResults.cancel();
-    };
-  }, [flyingFromValue]);
-
-  useEffect(() => {
-    debouncedFetchAirportResults(flyingToValue, "departure");
-    return () => {
-      debouncedFetchAirportResults.cancel();
-    };
-  }, [flyingToValue]);
 
   const handleTravelTypeChange = (travelType) => {
     setSelectedTravelType(travelType);

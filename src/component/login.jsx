@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import {
   Container,
-  Typography,
   TextField,
   Button,
   Link,
@@ -17,6 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
   const handleLogin = async () => {
     try {
       const apiUrl = "https://devadmin.altabooking.com/api/v2/auth/login";
