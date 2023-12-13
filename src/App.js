@@ -1,23 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Login from "./component/login";
+import FlightSearch from "./component/flightSearch";
+import FlightList from "./component/flightList";
+import Cart from "./component/cart";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Switch,
+  Navigate,
+} from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
+import { FlightListContextProvider } from "./Context/flightListContext";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <FlightListContextProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/flight"
+              element={
+                <PrivateRoute>
+                  <FlightSearch />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/flight/list"
+              element={
+                <PrivateRoute>
+                  <FlightList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <PrivateRoute>
+                  <Cart />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </FlightListContextProvider>
     </div>
   );
 }
